@@ -68,6 +68,23 @@ app.get('/api/products/:id' , async(req , res)=>{
  return res.json(product)
 })
 
+// Update product
+
+app.put('/api/products/:id' , async(req , res)=>{
+  const updatedProduct = await ProductModel.findByIdAndUpdate(req.params.id , req.body)
+  return res.json(updatedProduct)
+})
+
+
+/// Delete a Resource
+
+app.delete('/api/products/:id' , async(req , res)=>{
+  const deletedProduct = await ProductModel.findByIdAndDelete(req.params.id)
+
+  res.json(deletedProduct)
+})
+
+
 
 
 
