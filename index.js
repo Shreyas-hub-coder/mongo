@@ -12,50 +12,61 @@ mongoose
     console.log("Db Connected");
   })
   .catch((err) => {
-    console.log("Failed" , err);
+    console.log("Db connection Failed", err);
   });
 
-  // ProductSchema
+// ProductSchema
 
-  const productSchema = new mongoose.Schema({
-    product_name : {
-        type : String,
-        required : true
-    },
-    product_price : {
-        type : String,
-        required : true
-    },
-    isInstock : {
-        type: Boolean,
-        required : true
-    },
-    category : {
-        type : String,
-        required : true
-    }
-   
-  })
+const productSchema = new mongoose.Schema({
+  product_name: {
+    type: String,
+    required: true,
+  },
+  product_price: {
+    type: String,
+    required: true,
+  },
+  isInStock: {
+    type: Boolean,
+    required: true,
+  },
+  category: {
+    type: String,
+    required: true,
+  },
+});
+
+const ProductModel = mongoose.model("products", productSchema);
+
+// Create
+
+app.post("/api/products", async (req, res) => {
+   await ProductModel.create({
+    product_name: req.body.product_name,
+    product_price: req.body.product_price,
+    isInStock: req.body.isInStock,
+    category: req.body.category,
+  });
+
+  return res.status(201).json({ message: "Product Created" });
+});
 
 
-  const productModel = mongoose.model('prodcuts' , productSchema)
+// get route
 
-  app.post('/api/products' , async(req , res)=>{
-    const body = req.body
+app.get('/api/products' , async(req , res)=>{
+   const allProucts = await ProductModel.find({isInStock:true})
 
-    const product = productModel.create({
-        product_name : req.body.product_name,
-        product_price : req.body.product_price,
-        isInStock : req.body.isInStock,
-        category : req.body.category
-    })
+   return res.json(allProucts)
+})
 
-    console.log(product)
+// Get product by id
 
-    res.send(product);
+app.get('/api/products/:id' , async(req , res)=>{
+ const product = await ProductModel.findById(req.params.id)
 
-    return res.status(201).json({message : " Product Created"})
-  })
+ return res.json(product)
+})
 
 
 
@@ -63,4 +74,3 @@ mongoose
 app.listen(8086, () => {
   console.log("Server sarted at port 8086");
 });
-
